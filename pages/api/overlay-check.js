@@ -1,6 +1,6 @@
 import sharp from 'sharp';
 import { PDFDocument } from 'pdf-lib';
-
+import fetch from 'node-fetch';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
