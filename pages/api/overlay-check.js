@@ -1,5 +1,7 @@
 import sharp from 'sharp';
 import { PDFDocument } from 'pdf-lib';
+import fetch from 'node-fetch';
+
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -22,7 +24,7 @@ export default async function handler(req, res) {
     const customerBuffer = Buffer.from(await customerRes.arrayBuffer());
     const templateBuffer = Buffer.from(await templateRes.arrayBuffer());
 
-    const customerType = customerFileUrl.split('.').pop().toLowerCase();
+    const customerType = customerFileUrl.split('.').pop().split('?')[0].toLowerCase(); 
 
     const customerSize = customerType === 'pdf'
       ? await getPDFSize(customerBuffer)
