@@ -1,9 +1,9 @@
 {
   "version": 2,
   "builds": [
-    { "src": "api/overlay-check.js", "use": "@vercel/node" }
+    { "src": "pages/api/overlay-check.js", "use": "@vercel/node" }
   ],
   "routes": [
-    { "src": "/api/overlay", "dest": "api/overlay-check.js" }
+    { "src": "/pages/api/overlay", "dest": "pages/api/overlay-check.js" }
   ]
 }
