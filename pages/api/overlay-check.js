@@ -1,6 +1,6 @@
 import sharp from 'sharp';
 import { PDFDocument } from 'pdf-lib';
-import {pdfTopng } from 'pdf-to-png-converter';
+import { pdfToPng } from 'pdf-to-png-converter';
 
 export default async function handler(req, res) {
   // Check if the request method is POST
