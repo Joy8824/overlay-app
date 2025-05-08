@@ -1,6 +1,6 @@
 import sharp from 'sharp';
 import { PDFDocument } from 'pdf-lib';
-import { pdfToPng } from 'pdf-to-png-converter';
+import { convert } from 'pdf-to-png-converter';
 
 export default async function handler(req, res) {
   // Check if the request method is POST
@@ -12,6 +12,8 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid JSON body.'});
   }
 
+  let overlayDataUrl;
+  
   try {
     // Destructure the request body for customerFileUrl and templateUrl
     const { customerFileUrl, templateUrl } = req.body;
@@ -68,13 +70,14 @@ export default async function handler(req, res) {
         templateSize,
       });
     }
+    
  // pdf to png converter
     if (customerType === 'pdf') {
-  const pngPages = await pdfToPng(Buffer.from(customerBuffer), {
-    page: 1, // Just get the first page
-    viewportScale: 2.0, // higher = better resolution
-    outputFileMask: 'page', // filename (ignored in memory)
-    returnFileBuffer: true,
+      const pngPages = await convert(Buffer.from(customerBuffer), {
+      page: 1, // Just get the first page
+      viewportScale: 2.0, // higher = better resolution
+      outputFileMask: 'page', // filename (ignored in memory)
+      returnFileBuffer: true,
   });
 
   const pdfImageBuffer = pngPages[0].content; // First page as image buffer
@@ -86,7 +89,16 @@ export default async function handler(req, res) {
 
   const base64Image = composite.toString('base64');
   overlayDataUrl = `data:image/png;base64,${base64Image}`;
-}
+} 
+      // in case it's not PDF
+    else { 
+      const composite = await sharp(Buffer.from(customerBuffer))
+    .composite([{ input: Buffer.from(templateBuffer), blend: 'over', opacity: 0.5 }])
+    .toBuffer();
+      
+      const base64Image = composite.toString('base64');
+      overlayDataUrl = `data:image/png;base64,${base64Image}`;
+    }
 
     // Send the success response with the overlay data
     return res.status(200).json({
