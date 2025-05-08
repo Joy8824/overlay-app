@@ -38,11 +38,11 @@ export default async function handler(req, res) {
     }
 
     // Convert the fetched files into buffers
-    //const customerBuffer = await customerRes.buffer();
-    //const templateBuffer = await templateRes.buffer();
+    const customerBuffer = await customerRes.buffer();
+    const templateBuffer = await templateRes.buffer();
     
-    const customerBuffer = await customerRes.arrayBuffer();
-    const templateBuffer = await templateRes.arrayBuffer();
+    //const customerBuffer = await customerRes.arrayBuffer();
+    //const templateBuffer = await templateRes.arrayBuffer();
 
     // Get the type of the customer file (image or pdf)
     const customerType = customerFileUrl.split('.').pop().split('?')[0].toLowerCase();
