@@ -3,61 +3,46 @@ import { PDFDocument } from 'pdf-lib';
 import { convert } from 'pdf-to-png-converter';
 
 export default async function handler(req, res) {
-  // Check if the request method is POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Only POST allowed' });
   }
-  // if json body is incorrect when HTTP calls for it
+
   if (!req.body || typeof req.body !== 'object') {
-    return res.status(400).json({ error: 'Invalid JSON body.'});
+    return res.status(400).json({ error: 'Invalid JSON body.' });
   }
 
-  let overlayDataUrl;
-  
   try {
-    // Destructure the request body for customerFileUrl and templateUrl
     const { customerFileUrl, templateUrl } = req.body;
-    // message if the inputs above
     console.log('Received URLs:', { customerFileUrl, templateUrl });
 
-    // Ensure both parameters are present in the body
     if (!customerFileUrl || !templateUrl) {
-      // show message is parameters are missing
       console.error('Missing parameters');
       return res.status(400).json({ error: 'Missing parameters.' });
     }
 
-    // Fetch the customer file and template file
     const customerRes = await fetch(customerFileUrl);
     const templateRes = await fetch(templateUrl);
 
-    //
     console.log('Fetched customer file:', customerRes.status);
     console.log('Fetched template file:', templateRes.status);
 
-    // Check if the fetch requests were successful
     if (!customerRes.ok || !templateRes.ok) {
       return res.status(400).json({ error: 'Failed to fetch files.' });
     }
 
-    // Convert the fetched files into buffers
     const customerBuffer = await customerRes.arrayBuffer();
     const templateBuffer = await templateRes.arrayBuffer();
 
-    // Get the type of the customer file (image or pdf)
     const customerType = customerFileUrl.split('.').pop().split('?')[0].toLowerCase();
     console.log('Customer file type:', customerType);
 
-    // Get the size of the customer file (either PDF or image)
     const customerSize = customerType === 'pdf'
       ? await getPDFSize(customerBuffer)
       : await getImageSize(customerBuffer);
 
-    // Get the size of the template image
     const templateSize = await getImageSize(templateBuffer);
     console.log('Sizes:', { customerSize, templateSize });
 
-    // Check if the sizes match
     const sizesMatch =
       customerSize.width === templateSize.width &&
       customerSize.height === templateSize.height;
@@ -70,37 +55,33 @@ export default async function handler(req, res) {
         templateSize,
       });
     }
-    
- // pdf to png converter
+
+    let overlayDataUrl;
+
     if (customerType === 'pdf') {
       const pngPages = await convert(Buffer.from(customerBuffer), {
-      page: 1, // Just get the first page
-      viewportScale: 2.0, // higher = better resolution
-      outputFileMask: 'page', // filename (ignored in memory)
-      returnFileBuffer: true,
-  });
+        page: 1,
+        viewportScale: 2.0,
+        returnFileBuffer: true,
+      });
 
-  const pdfImageBuffer = pngPages[0].content; // First page as image buffer
+      const pdfImageBuffer = pngPages[0].content;
 
-  // Composite with the template
-  const composite = await sharp(pdfImageBuffer)
-    .composite([{ input: Buffer.from(templateBuffer), blend: 'over', opacity: 0.5 }])
-    .toBuffer();
+      const composite = await sharp(pdfImageBuffer)
+        .composite([{ input: Buffer.from(templateBuffer), blend: 'over', opacity: 0.5 }])
+        .toBuffer();
 
-  const base64Image = composite.toString('base64');
-  overlayDataUrl = `data:image/png;base64,${base64Image}`;
-} 
-      // in case it's not PDF
-    else { 
+      const base64Image = composite.toString('base64');
+      overlayDataUrl = `data:image/png;base64,${base64Image}`;
+    } else {
       const composite = await sharp(Buffer.from(customerBuffer))
-    .composite([{ input: Buffer.from(templateBuffer), blend: 'over', opacity: 0.5 }])
-    .toBuffer();
-      
+        .composite([{ input: Buffer.from(templateBuffer), blend: 'over', opacity: 0.5 }])
+        .toBuffer();
+
       const base64Image = composite.toString('base64');
       overlayDataUrl = `data:image/png;base64,${base64Image}`;
     }
 
-    // Send the success response with the overlay data
     return res.status(200).json({
       sizeCheckPassed: true,
       overlayDataUrl,
@@ -109,19 +90,16 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    // Catch any errors and return a 500 response
     console.error('Unhandled error:', error);
     return res.status(500).json({ error: error.message });
   }
 }
 
-// Function to get image size (width and height) using Sharp
 async function getImageSize(buffer) {
   const metadata = await sharp(buffer).metadata();
   return { width: metadata.width, height: metadata.height };
 }
 
-// Function to get PDF size (width and height) using pdf-lib
 async function getPDFSize(buffer) {
   const pdfDoc = await PDFDocument.load(buffer);
   const page = pdfDoc.getPage(0);
