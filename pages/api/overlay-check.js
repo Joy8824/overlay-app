@@ -1,6 +1,6 @@
 import sharp from 'sharp';
 import { PDFDocument } from 'pdf-lib';
-import { convert } from 'pdf-to-png-converter';
+import pdfToPng from 'pdf-to-png-converter';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -59,7 +59,7 @@ export default async function handler(req, res) {
     let overlayDataUrl;
 
     if (customerType === 'pdf') {
-      const pngPages = await convert(Buffer.from(customerBuffer), {
+      const pngPages = await pdfToPng(Buffer.from(customerBuffer), {
         page: 1,
         viewportScale: 2.0,
         returnFileBuffer: true,
