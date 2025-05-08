@@ -1,12 +1,10 @@
 import sharp from 'sharp';
 import { PDFDocument } from 'pdf-lib';
 
-  export default async function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Only POST allowed' });
   }
-}
-
 
   try {
     const { customerFileUrl, templateUrl } = req.body;
@@ -20,11 +18,11 @@ import { PDFDocument } from 'pdf-lib';
     if (!customerRes.ok || !templateRes.ok) {
       return res.status(400).json({ error: 'Failed to fetch files.' });
     }
-    
+
     const customerBuffer = await customerRes.buffer();
     const templateBuffer = await templateRes.buffer();
 
-    const customerType = customerFileUrl.split('.').pop().split('?')[0].toLowerCase(); 
+    const customerType = customerFileUrl.split('.').pop().split('?')[0].toLowerCase();
 
     const customerSize = customerType === 'pdf'
       ? await getPDFSize(customerBuffer)
@@ -61,7 +59,7 @@ import { PDFDocument } from 'pdf-lib';
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-
+}
 
 async function getImageSize(buffer) {
   const metadata = await sharp(buffer).metadata();
