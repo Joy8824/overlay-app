@@ -10,9 +10,7 @@
     "next": "^13.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "sharp": "npm:@sharp/installer-linux@latest",
-    "pdf-lib": "^1.17.1",
-    "@vercel/nft": "^0.25.0"
-    
+    "sharp": "^0.33.1",
+    "pdf-lib": "^1.17.1"
   }
 }
