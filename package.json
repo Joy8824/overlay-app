@@ -12,7 +12,7 @@
     "react-dom": "^18.2.0",
     "sharp": "npm:@sharp/installer-linux@latest",
     "pdf-lib": "^1.17.1",
-    "@vercel/nft": "^0.25.0",
+    "@vercel/nft": "^0.25.0"
     
   }
 }
