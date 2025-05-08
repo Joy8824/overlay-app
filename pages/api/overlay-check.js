@@ -6,6 +6,10 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Only POST allowed' });
   }
+  // if json body is incorrect when HTTP calls for it
+  if (!req.body || typeof req.body !== 'object') {
+    return res.status(400).json({ error: 'Invalid JSON body.'});
+  }
 
   try {
     // Destructure the request body for customerFileUrl and templateUrl
