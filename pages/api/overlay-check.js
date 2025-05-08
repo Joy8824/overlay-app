@@ -1,5 +1,6 @@
 import sharp from 'sharp';
 import { PDFDocument } from 'pdf-lib';
+import {pdfTopng } from 'pdf-to-png-converter';
 
 export default async function handler(req, res) {
   // Check if the request method is POST
@@ -28,7 +29,7 @@ export default async function handler(req, res) {
     const customerRes = await fetch(customerFileUrl);
     const templateRes = await fetch(templateUrl);
 
-    //delete later
+    //
     console.log('Fetched customer file:', customerRes.status);
     console.log('Fetched template file:', templateRes.status);
 
@@ -38,9 +39,6 @@ export default async function handler(req, res) {
     }
 
     // Convert the fetched files into buffers
-    //const customerBuffer = await customerRes.buffer();
-    //const templateBuffer = await templateRes.buffer();
-    
     const customerBuffer = await customerRes.arrayBuffer();
     const templateBuffer = await templateRes.arrayBuffer();
 
@@ -70,15 +68,25 @@ export default async function handler(req, res) {
         templateSize,
       });
     }
+ // pdf to png converter
+    if (customerType === 'pdf') {
+  const pngPages = await pdfToPng(Buffer.from(customerBuffer), {
+    page: 1, // Just get the first page
+    viewportScale: 2.0, // higher = better resolution
+    outputFileMask: 'page', // filename (ignored in memory)
+    returnFileBuffer: true,
+  });
 
-    // Composite the customer image with the template using Sharp
-    const composite = await sharp(customerBuffer)
-      .composite([{ input: templateBuffer, blend: 'over', opacity: 0.5 }])
-      .toBuffer();
+  const pdfImageBuffer = pngPages[0].content; // First page as image buffer
 
-    // Convert the composite image to base64
-    const base64Image = composite.toString('base64');
-    const overlayDataUrl = `data:image/png;base64,${base64Image}`;
+  // Composite with the template
+  const composite = await sharp(pdfImageBuffer)
+    .composite([{ input: Buffer.from(templateBuffer), blend: 'over', opacity: 0.5 }])
+    .toBuffer();
+
+  const base64Image = composite.toString('base64');
+  overlayDataUrl = `data:image/png;base64,${base64Image}`;
+}
 
     // Send the success response with the overlay data
     return res.status(200).json({
