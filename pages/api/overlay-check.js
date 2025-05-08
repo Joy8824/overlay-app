@@ -2,7 +2,7 @@ import sharp from 'sharp';
 import { PDFDocument } from 'pdf-lib';
 
 export default async function handler(req, res) {
-  if (req.method !== 'post') {
+  if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Only POST allowed' });
   }
 
