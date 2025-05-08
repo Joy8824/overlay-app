@@ -18,9 +18,9 @@ export default async function handler(req, res) {
     if (!customerRes.ok || !templateRes.ok) {
       return res.status(400).json({ error: 'Failed to fetch files.' });
     }
-
-    const customerBuffer = Buffer.from(await customerRes.arrayBuffer());
-    const templateBuffer = Buffer.from(await templateRes.arrayBuffer());
+    
+    const customerBuffer = await customerRes.buffer();
+    const templateBuffer = await templateRes.buffer();
 
     const customerType = customerFileUrl.split('.').pop().split('?')[0].toLowerCase(); 
 
