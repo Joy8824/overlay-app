@@ -16,31 +16,23 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Check file type
-    const customerRes = await fetch(customerFileUrl);
-    const templateRes = await fetch(templateUrl);
-
-    if (!customerRes.ok || !templateRes.ok) {
-    return res.status(400).json({ error: 'Failed to fetch one or both files.' });
-  }
-
-  // Detect actual image type from the header
-  const contentType = customerRes.headers.get('content-type');
-  if (!['image/png', 'image/jpeg'].includes(contentType)) {
-    return res.status(400).json({ error: 'Only PNG or JPG image files are supported at this time.' });
-  }
-
     // Fetch both files
-    const [customerBuffer, templateBuffer] = await Promise.all([
-      customerRes.arrayBuffer(),
-      templateRes.arrayBuffer(),
+    const [customerRes, templateRes] = await Promise.all([
+      fetch(customerFileUrl),
+      fetch(templateUrl),
     ]);
-
 
     if (!customerRes.ok || !templateRes.ok) {
       return res.status(400).json({ error: 'Failed to fetch one or both files.' });
     }
 
+    // Check content type
+    const contentType = customerRes.headers.get('content-type');
+    if (!['image/png', 'image/jpeg'].includes(contentType)) {
+      return res.status(400).json({ error: 'Only PNG or JPG image files are supported at this time.' });
+    }
+
+    // Convert responses to buffers
     const [customerBuffer, templateBuffer] = await Promise.all([
       customerRes.arrayBuffer(),
       templateRes.arrayBuffer(),
