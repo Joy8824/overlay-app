@@ -1,47 +1,45 @@
 import sharp from 'sharp';
-import { PDFDocument } from 'pdf-lib';
-import pdfToPng from 'pdf-to-png-converter';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Only POST allowed' });
+    return res.status(405).json({ error: 'Only POST method is allowed.' });
   }
 
   if (!req.body || typeof req.body !== 'object') {
     return res.status(400).json({ error: 'Invalid JSON body.' });
   }
 
-  try {
-    const { customerFileUrl, templateUrl } = req.body;
-    console.log('Received URLs:', { customerFileUrl, templateUrl });
+  const { customerFileUrl, templateUrl } = req.body;
 
-    if (!customerFileUrl || !templateUrl) {
-      console.error('Missing parameters');
-      return res.status(400).json({ error: 'Missing parameters.' });
+  if (!customerFileUrl || !templateUrl) {
+    return res.status(400).json({ error: 'Missing customerFileUrl or templateUrl.' });
+  }
+
+  try {
+    // Check file type
+    const fileType = customerFileUrl.split('.').pop().split('?')[0].toLowerCase();
+    if (!['png', 'jpg', 'jpeg'].includes(fileType)) {
+      return res.status(400).json({ error: 'Only PNG or JPG image files are supported at this time.' });
     }
 
-    const customerRes = await fetch(customerFileUrl);
-    const templateRes = await fetch(templateUrl);
-
-    console.log('Fetched customer file:', customerRes.status);
-    console.log('Fetched template file:', templateRes.status);
+    // Fetch both files
+    const [customerRes, templateRes] = await Promise.all([
+      fetch(customerFileUrl),
+      fetch(templateUrl),
+    ]);
 
     if (!customerRes.ok || !templateRes.ok) {
-      return res.status(400).json({ error: 'Failed to fetch files.' });
+      return res.status(400).json({ error: 'Failed to fetch one or both files.' });
     }
 
-    const customerBuffer = await customerRes.arrayBuffer();
-    const templateBuffer = await templateRes.arrayBuffer();
+    const [customerBuffer, templateBuffer] = await Promise.all([
+      customerRes.arrayBuffer(),
+      templateRes.arrayBuffer(),
+    ]);
 
-    const customerType = customerFileUrl.split('.').pop().split('?')[0].toLowerCase();
-    console.log('Customer file type:', customerType);
-
-    const customerSize = customerType === 'pdf'
-      ? await getPDFSize(customerBuffer)
-      : await getImageSize(customerBuffer);
-
+    // Get sizes
+    const customerSize = await getImageSize(customerBuffer);
     const templateSize = await getImageSize(templateBuffer);
-    console.log('Sizes:', { customerSize, templateSize });
 
     const sizesMatch =
       customerSize.width === templateSize.width &&
@@ -56,31 +54,14 @@ export default async function handler(req, res) {
       });
     }
 
-    let overlayDataUrl;
+    // Overlay template onto customer image
+    const compositeBuffer = await sharp(Buffer.from(customerBuffer))
+      .composite([{ input: Buffer.from(templateBuffer), blend: 'over', opacity: 0.5 }])
+      .png()
+      .toBuffer();
 
-    if (customerType === 'pdf') {
-      const pngPages = await pdfToPng(Buffer.from(customerBuffer), {
-        page: 1,
-        viewportScale: 2.0,
-        returnFileBuffer: true,
-      });
-
-      const pdfImageBuffer = pngPages[0].content;
-
-      const composite = await sharp(pdfImageBuffer)
-        .composite([{ input: Buffer.from(templateBuffer), blend: 'over', opacity: 0.5 }])
-        .toBuffer();
-
-      const base64Image = composite.toString('base64');
-      overlayDataUrl = `data:image/png;base64,${base64Image}`;
-    } else {
-      const composite = await sharp(Buffer.from(customerBuffer))
-        .composite([{ input: Buffer.from(templateBuffer), blend: 'over', opacity: 0.5 }])
-        .toBuffer();
-
-      const base64Image = composite.toString('base64');
-      overlayDataUrl = `data:image/png;base64,${base64Image}`;
-    }
+    const base64Image = compositeBuffer.toString('base64');
+    const overlayDataUrl = `data:image/png;base64,${base64Image}`;
 
     return res.status(200).json({
       sizeCheckPassed: true,
@@ -89,20 +70,13 @@ export default async function handler(req, res) {
       templateSize,
     });
 
-  } catch (error) {
-    console.error('Unhandled error:', error);
-    return res.status(500).json({ error: error.message });
+  } catch (err) {
+    console.error('Unhandled error:', err);
+    return res.status(500).json({ error: 'Internal server error.' });
   }
 }
 
 async function getImageSize(buffer) {
-  const metadata = await sharp(buffer).metadata();
+  const metadata = await sharp(Buffer.from(buffer)).metadata();
   return { width: metadata.width, height: metadata.height };
-}
-
-async function getPDFSize(buffer) {
-  const pdfDoc = await PDFDocument.load(buffer);
-  const page = pdfDoc.getPage(0);
-  const { width, height } = page.getSize();
-  return { width: Math.round(width), height: Math.round(height) };
 }
