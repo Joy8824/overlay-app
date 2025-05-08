@@ -2,18 +2,18 @@
   "name": "overlay-checker",
   "version": "1.0.0",
   "scripts": {
-  "dev": "next dev",
-  "build": "next build",
-  "start": "next start",
-  "clean": "rm -rf node_modules",
-  "reinstall": "npm run clean && npm install",
-  "rebuild": "npm run clean && npm install && npm run build"
-},
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "clean": "rm -rf node_modules",
+    "reinstall": "npm run clean && npm install",
+    "rebuild": "npm run clean && npm install && npm run build"
+  },
   "dependencies": {
-    "next": "^13.4.0",
+    "next": "^15.3.2",
+    "pdf-lib": "^1.17.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "sharp": "^0.32.1",
-    "pdf-lib": "^1.17.1"
+    "sharp": "^0.32.1"
   }
 }

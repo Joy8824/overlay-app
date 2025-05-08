@@ -5,22 +5,6 @@ import { PDFDocument } from 'pdf-lib';
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Only POST allowed' });
   }
-
-  try {
-    // Assuming you're processing the request body here
-    const data = req.body;
-
-    // You can log the request body to debug
-    console.log('Received data:', data);
-
-    // If everything goes well, send a success response
-    return res.status(200).json({ message: 'Success', data });
-
-  } catch (error) {
-    // Catch any errors that occur during processing
-    console.error('Error:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
-  }
 }
 
 
@@ -77,7 +61,7 @@ import { PDFDocument } from 'pdf-lib';
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-}
+
 
 async function getImageSize(buffer) {
   const metadata = await sharp(buffer).metadata();
