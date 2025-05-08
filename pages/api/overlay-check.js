@@ -14,9 +14,13 @@ export default async function handler(req, res) {
   try {
     // Destructure the request body for customerFileUrl and templateUrl
     const { customerFileUrl, templateUrl } = req.body;
+    // message if the inputs above
+    console.log('Received URLs:', { customerFileUrl, templateUrl });
 
     // Ensure both parameters are present in the body
     if (!customerFileUrl || !templateUrl) {
+      // show message is parameters are missing
+      console.error('Missing parameters');
       return res.status(400).json({ error: 'Missing parameters.' });
     }
 
@@ -24,17 +28,25 @@ export default async function handler(req, res) {
     const customerRes = await fetch(customerFileUrl);
     const templateRes = await fetch(templateUrl);
 
+    //delete later
+    console.log('Fetched customer file:', customerRes.status);
+    console.log('Fetched template file:', templateRes.status);
+
     // Check if the fetch requests were successful
     if (!customerRes.ok || !templateRes.ok) {
       return res.status(400).json({ error: 'Failed to fetch files.' });
     }
 
     // Convert the fetched files into buffers
-    const customerBuffer = await customerRes.buffer();
-    const templateBuffer = await templateRes.buffer();
+    //const customerBuffer = await customerRes.buffer();
+    //const templateBuffer = await templateRes.buffer();
+    
+    const customerBuffer = await customerRes.arrayBuffer();
+    const templateBuffer = await templateRes.arrayBuffer();
 
     // Get the type of the customer file (image or pdf)
     const customerType = customerFileUrl.split('.').pop().split('?')[0].toLowerCase();
+    console.log('Customer file type:', customerType);
 
     // Get the size of the customer file (either PDF or image)
     const customerSize = customerType === 'pdf'
@@ -43,6 +55,7 @@ export default async function handler(req, res) {
 
     // Get the size of the template image
     const templateSize = await getImageSize(templateBuffer);
+    console.log('Sizes:', { customerSize, templateSize });
 
     // Check if the sizes match
     const sizesMatch =
@@ -77,6 +90,7 @@ export default async function handler(req, res) {
 
   } catch (error) {
     // Catch any errors and return a 500 response
+    console.error('Unhandled error:', error);
     return res.status(500).json({ error: error.message });
   }
 }
