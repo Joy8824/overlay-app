@@ -5,6 +5,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start"
+    "postinstall": "npm rebuild sharp --platform=linux --arch=x64"
   },
   "dependencies": {
     "next": "^13.4.0",
