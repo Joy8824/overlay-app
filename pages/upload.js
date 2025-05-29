@@ -37,7 +37,7 @@ export default function Upload() {
     formData.append('sessionId', sessionId);
 
     try {
-      const resp = await fetch('https://hook.us2.make.com/hx7z2noyx2vxku96ss7x9ojxwfuyrog9', {
+      const resp = await fetch('https://hook.us2.make.com/29wwylk0jb47wa7tu5iriqir5apkp2j0', {
         method: 'POST',
         body: formData,
       });
