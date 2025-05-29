@@ -28,6 +28,36 @@ export default function Upload() {
     }
   }, [info]);
 
+  async function uploadFile(file) {
+    setStatus('uploading');
+    setMsg('');
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('sessionId', sessionId);
+
+    try {
+      const resp = await fetch('https://hook.us2.make.com/hx7z2noyx2vxku96ss7x9ojxwfuyrog9', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await resp.json();
+
+      if (resp.ok) {
+        setStatus('ok');
+        setMsg('Upload successful! Processing your file.');
+      } else {
+        setStatus('err');
+        setMsg(result?.error || 'Upload failed');
+      }
+    } catch (err) {
+      console.error(err);
+      setStatus('err');
+      setMsg('Something went wrong while uploading.');
+    }
+  }
+
   if (!info) return <p>Loading…</p>;
 
   const { product, qty } = info;
@@ -40,10 +70,10 @@ export default function Upload() {
       {status !== 'ok' && (
         <>
           <input
-            ref={fileInputRef} // 👈 bind the ref
+            ref={fileInputRef}
             type="file"
             accept="image/*,application/pdf"
-            style={{ display: 'none' }} // 👈 hide it
+            style={{ display: 'none' }}
             onChange={(e) => e.target.files[0] && uploadFile(e.target.files[0])}
           />
           {status === 'uploading' && <p>Uploading… please wait.</p>}
