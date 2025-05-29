@@ -1,29 +1,58 @@
 'use client';
-import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
 export default function Upload() {
-  const [status, setStatus] = useState(null); // 'uploading' | 'ok' | 'err'
-  const [msg, setMsg] = useState('');
+  const router = useRouter();
+  const { sessionId } = router.query;
 
-  const params = typeof window !== 'undefined' ? new URLSearchParams(location.search) : new URLSearchParams();
-  const order = params.get('order');
-  const product = params.get('product');
-  const qty = params.get('qty');
+  const [info, setInfo] = useState(null);      // holds order & template data
+  const [status, setStatus] = useState(null);  // uploading / ok / err
+  const [msg, setMsg]     = useState('');
 
-  const uploadFile = async (file) => {
+  // Fetch order/template info
+  useEffect(() => {
+    if (!sessionId) return;
+    fetch(`/api/session?session=${sessionId}`)
+      .then(r => r.json())
+      .then(setInfo)
+      .catch(() => {
+        setMsg('Could not load order info');
+        setStatus('err');
+      });
+  }, [sessionId]);
+
+  // Upload handler
+  async function uploadFile(file) {
     setStatus('uploading');
+    setMsg('');
 
-    // TEMP: Simulate successful upload
-    setTimeout(() => {
+    // TODO: Add file dimension check here using info.templateWidth / templateHeight
+
+    try {
+      // TEMP SIMULATION: Just wait 1 second and pretend upload worked
+      await new Promise(res => setTimeout(res, 1000));
+
       setStatus('ok');
-      setMsg('File ready to upload (this is just a test page!)');
-    }, 1000);
-  };
+      setMsg('Upload successful!');
+    } catch (err) {
+      console.error(err);
+      setStatus('err');
+      setMsg('Upload failed.');
+    }
+  }
+
+  if (!info) return <p style={{ textAlign: 'center', marginTop: '60px' }}>Loading…</p>;
 
   return (
-    <div style={{ maxWidth: 480, margin: '60px auto', fontFamily: 'sans-serif', textAlign: 'center' }}>
-      <h2>Upload Artwork – {product}</h2>
-      <p>Qty ordered: {qty}</p>
+    <div style={{
+      maxWidth: 480,
+      margin: '60px auto',
+      fontFamily: 'sans-serif',
+      textAlign: 'center'
+    }}>
+      <h2>Upload Artwork – {info.productTitle}</h2>
+      <p>Qty ordered: {info.quantity}</p>
 
       {status !== 'ok' && (
         <>
@@ -31,12 +60,13 @@ export default function Upload() {
             type="file"
             accept="image/*,application/pdf"
             onChange={(e) => e.target.files[0] && uploadFile(e.target.files[0])}
+            style={{ marginTop: '20px' }}
           />
           {status === 'uploading' && <p>Uploading… please wait.</p>}
         </>
       )}
 
-      {status && <p style={{ color: status === 'err' ? 'red' : 'green' }}>{msg}</p>}
+      {status && <p style={{ color: status === 'err' ? 'red' : 'green', marginTop: '20px' }}>{msg}</p>}
     </div>
   );
 }
