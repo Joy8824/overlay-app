@@ -5,7 +5,7 @@ export default async function handler(req, res) {
   }
 
   const resp = await fetch(
-    `https://hook.us2.make.com/abc123?sessionId=${session}`
+    `https://hook.us2.make.com/29wwylk0jb47wa7tu5iriqir5apkp2j0?sessionId=${session}`
   );
 
   if (!resp.ok) {
