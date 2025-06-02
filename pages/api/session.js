@@ -13,17 +13,6 @@ export default async function handler(req, res) {
   }
 
   // read once
-  const raw = await resp.text();
-
-  let data;
-  try {
-    data = JSON.parse(raw);          // will work only if Make returned JSON
-  } catch {
-    console.warn('Non-JSON response from Make:', raw);
-    return res
-      .status(500)
-      .json({ error: 'Invalid JSON returned from webhook', raw });
-  }
-
+  const data = await resp.json();
   res.status(200).json(data);
 }
