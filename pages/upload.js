@@ -20,14 +20,20 @@ export default function Upload() {
       .then(setInfo)
       .catch(() => setMsg('Could not load order info'));
   }, [sessionId]);
-
+//  ---- remove the auto button oppener --- //
   // Open file picker when info is loaded
-  useEffect(() => {
-    if (info && fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  }, [info]);
+//  useEffect(() => {
+  //  if (info && fileInputRef.current) {
+   //   fileInputRef.current.click();
+  //  }
+ // }, [info]);
 
+  // added manual button below
+<button onClick={() => fileInputRef.current?.click()}>
+  Choose file
+</button>
+
+  
   async function uploadFile(file) {
     setStatus('uploading');
     setMsg('');
