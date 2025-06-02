@@ -77,7 +77,7 @@ export default function Upload() {
             style={{ display: 'none' }}
             onChange={(e) => e.target.files[0] && uploadFile(e.target.files[0])}
           />
-              // added manual button below
+             
               <button onClick={() => fileInputRef.current?.click()}>
                 Choose file
               </button>
