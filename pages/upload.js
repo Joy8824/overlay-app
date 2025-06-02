@@ -10,7 +10,7 @@ export default function Upload() {
   const [status, setStatus] = useState(null);  // uploading / ok / err
   const [msg, setMsg] = useState('');
 
-  const fileInputRef = useRef(); // 👈 ref for the file input
+  const fileInputRef = useRef(); //  ref for the file input
 
   // Fetch order info on mount
   useEffect(() => {
@@ -20,13 +20,6 @@ export default function Upload() {
       .then(setInfo)
       .catch(() => setMsg('Could not load order info'));
   }, [sessionId]);
-//  ---- remove the auto button oppener --- //
-  // Open file picker when info is loaded
-//  useEffect(() => {
-  //  if (info && fileInputRef.current) {
-   //   fileInputRef.current.click();
-  //  }
- // }, [info]);
 
   
   async function uploadFile(file) {
@@ -38,7 +31,7 @@ export default function Upload() {
     formData.append('sessionId', sessionId);
 
     try {
-      const resp = await fetch('https://hook.us2.make.com/29wwylk0jb47wa7tu5iriqir5apkp2j0', {
+      const resp = await fetch('https://hook.us2.make.com/s0n9gbnzbh2on44e2329v5llt6lqgi3f', {
         method: 'POST',
         body: formData,
       });
