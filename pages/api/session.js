@@ -7,6 +7,17 @@ export default async function handler(req, res) {
   );
 
   // read once
-  const data = await resp.json();
+  const raw = await resp.text();
+
+  let data;
+  try {
+    data = JSON.parse(raw);          // will work only if Make returned JSONAdd commentMore actions
+  } catch {
+    console.warn('Non-JSON response from Make:', raw);
+    return res
+      .status(500)
+      .json({ error: 'Invalid JSON returned from webhook', raw });
+  }
+
   res.status(200).json(data);
 }
