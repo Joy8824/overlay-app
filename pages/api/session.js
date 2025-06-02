@@ -3,7 +3,7 @@ export default async function handler(req, res) {
   if (!session) return res.status(400).json({ error: 'Missing session ID' });
 
   const resp = await fetch(
-    `https://hook.us2.make.com/29wwylk0jb47wa7tu5iriqir5apkp2j0?sessionId=${session}`
+    `https://hook.us2.make.com/s0n9gbnzbh2on44e2329v5llt6lqgi3f?sessionId=${session}`
   );
 
   // read once
