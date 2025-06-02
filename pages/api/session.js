@@ -11,12 +11,10 @@ export default async function handler(req, res) {
 
   let data;
   try {
-    data = JSON.parse(raw);          // will work only if Make returned JSONAdd commentMore actions
+    data = JSON.parse(raw); // will work only if Make returned JSON
   } catch {
     console.warn('Non-JSON response from Make:', raw);
-    return res
-      .status(500)
-      .json({ error: 'Invalid JSON returned from webhook', raw });
+    return res.status(500).json({ error: 'Invalid JSON returned from webhook', raw });
   }
 
   res.status(200).json(data);
