@@ -42,23 +42,33 @@ export default function Upload() {
         method: 'POST',
         body: formData,
       });
-
-      const result = await resp.json();
-
+      
+      let resultText = await resp.text(); // grab raw response in case it’s not JSON
+      let result;
+      
+      try {
+        result = JSON.parse(resultText);
+      } catch {
+        result = { error: resultText }; // fallback if not JSON
+      }
+      
       if (resp.ok) {
         setStatus('ok');
         setMsg('Upload successful! Processing your file.');
       } else {
+        console.error('Upload failed:', result);
         setStatus('err');
+  
         setMsg(result?.error || 'Upload failed');
       }
+    
     } catch (err) {
       console.error(err);
       setStatus('err');
       setMsg('Something went wrong while uploading.');
     }
   }
-
+  
   if (!info) return <p>Loading…</p>;
 
   const { product, qty } = info;
