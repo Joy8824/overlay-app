@@ -15,7 +15,6 @@ export function saveOverlay(sessionId, overlay) {
 }
 
 export function getOverlay(sessionId) {
-  console.log(`📤 Returning ${data.length} overlays for session [${sessionId}]`); // delete later
   return overlayStore.get(sessionId) || [];
 }
 
