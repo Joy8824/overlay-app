@@ -1,5 +1,6 @@
 import sharp from 'sharp';
-import { saveOverlay } from './overlay-info.js'; // Adjust path if needed
+import { saveOverlay, getOverlay } from './overlay-info.js'; // Add getOverlay
+import fetch from 'node-fetch'; // Optional: if running locally
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -10,10 +11,10 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid JSON body.' });
   }
 
-const { customerFileUrl, templateUrl, sessionId, fileName, productName } = req.body;
+  const { customerFileUrl, templateUrl, sessionId, fileName, productName } = req.body;
 
-  if (!customerFileUrl || !templateUrl) {
-    return res.status(400).json({ error: 'Missing customerFileUrl or templateUrl.' });
+  if (!customerFileUrl || !templateUrl || !sessionId) {
+    return res.status(400).json({ error: 'Missing required fields.' });
   }
 
   try {
@@ -64,7 +65,8 @@ const { customerFileUrl, templateUrl, sessionId, fileName, productName } = req.b
 
     const base64Image = compositeBuffer.toString('base64');
     const overlayDataUrl = `data:image/png;base64,${base64Image}`;
-    
+
+    // Save to memory
     saveOverlay(sessionId, {
       fileName,
       productName,
@@ -72,7 +74,10 @@ const { customerFileUrl, templateUrl, sessionId, fileName, productName } = req.b
       overlayImageUrl: overlayDataUrl,
       fileId: 'TODO: your unique file id if needed',
     });
-    console.log('Saved overlay for session', sessionId) //delete later
+
+    // Upload to Dropbox
+    const overlays = getOverlay(sessionId); // get all overlays in memory
+    await uploadOverlayToDropbox(sessionId, overlays);
 
     return res.status(200).json({
       sizeCheckPassed: true,
@@ -92,3 +97,33 @@ async function getImageSize(buffer) {
   return { width: metadata.width, height: metadata.height };
 }
 
+async function uploadOverlayToDropbox(sessionId, overlays) {
+  const ACCESS_TOKEN = process.env.DROPBOX_ACCESS_TOKEN;
+  if (!ACCESS_TOKEN) {
+    throw new Error('Missing Dropbox access token');
+  }
+
+  const path = `/Overlays/${sessionId}.json`;
+
+  const response = await fetch('https://content.dropboxapi.com/2/files/upload', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${ACCESS_TOKEN}`,
+      'Content-Type': 'application/octet-stream',
+      'Dropbox-API-Arg': JSON.stringify({
+        path,
+        mode: 'overwrite',
+        mute: true,
+        strict_conflict: false
+      })
+    },
+    body: JSON.stringify(overlays)
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Dropbox upload failed: ${text}`);
+  }
+
+  console.log(`Overlay data uploaded to Dropbox at ${path}`);
+}
