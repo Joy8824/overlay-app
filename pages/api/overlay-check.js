@@ -1,4 +1,5 @@
 import sharp from 'sharp';
+import { saveOverlay } from './overlay-info.js'; // Adjust path if needed
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -81,3 +82,11 @@ async function getImageSize(buffer) {
   const metadata = await sharp(Buffer.from(buffer)).metadata();
   return { width: metadata.width, height: metadata.height };
 }
+
+saveOverlay(req.body.sessionId, {
+  fileName: req.body.fileName,
+  productName: req.body.productName,
+  customerFileUrl,
+  overlayImageUrl: overlayDataUrl,
+  fileId: 'TODO: your unique file id if needed',
+});
