@@ -14,21 +14,6 @@ const CardContent = ({ children, className }) => (
 /**
  * Overlay Approval Preview Page
  *
- * Query params:
- *   ?sessionId=abc123
- *
- * Fetches overlay data from /api/overlay-info?session=<sessionId>
- * Expected JSON:
- * [
- *   {
- *     "fileName": "banner1.jpg",
- *     "productName": "10ft Backlit Display",
- *     "customerFileUrl": "https://...",
- *     "overlayImageUrl": "https://...",
- *     "fileId": "abc123"
- *   },
- *   ...
- * ]
  */
 export default function Overlay() {
   const router = useRouter();
