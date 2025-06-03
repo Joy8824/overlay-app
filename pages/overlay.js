@@ -63,18 +63,6 @@ useEffect(() => {
   fetchData();
 }, [sessionId]);
 
-        if (!res.ok) throw new Error("Failed to load overlay data");
-        const json = await res.json();
-        setItems(json);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [sessionId]);
-
   const current = items[index] ?? {};
 
   const next = () => setIndex((prev) => (prev + 1) % items.length);
