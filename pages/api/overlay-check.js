@@ -72,6 +72,7 @@ export default async function handler(req, res) {
       overlayImageUrl: overlayDataUrl,
       fileId: 'TODO: your unique file id if needed',
     });
+    console.log('Saved overlay for session', sessionId) //delete later
 
     return res.status(200).json({
       sizeCheckPassed: true,
