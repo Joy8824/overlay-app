@@ -18,17 +18,31 @@ export function getOverlay(sessionId) {
   return overlayStore.get(sessionId) || [];
 }
 
-export default function handler(req, res) {
-  const { sessionId } = req.query;
-
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Only GET method allowed.' });
-  }
+export default async function handler(req, res) {
+  const sessionId = req.query.sessionId;
 
   if (!sessionId) {
-    return res.status(400).json({ error: 'Missing session ID' });
+    return res.status(400).json({ error: 'Missing sessionId' });
   }
 
-  const overlays = getOverlay(sessionId);
-  return res.status(200).json({overlays});
+  try {
+    const makeRes = await fetch(process.env.MAKE_WEBHOOK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ sessionId }),
+    });
+
+    const data = await makeRes.json();
+
+    if (!data || !data.overlayData || data.overlayData.length === 0) {
+      return res.status(200).json({ overlayData: [] });
+    }
+
+    res.status(200).json({ overlayData: data.overlayData });
+  } catch (error) {
+    console.error('Error fetching overlay data:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 }
