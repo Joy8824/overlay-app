@@ -19,14 +19,20 @@ export function getOverlay(sessionId) {
 }
 
 export default async function handler(req, res) {
-  const sessionId = req.query.sessionId;
+  const sessionId = req.method === 'GET' ? req.query.sessionId : req.body.sessionId;
 
   if (!sessionId) {
     return res.status(400).json({ error: 'Missing sessionId' });
   }
 
+  const webhookUrl = process.env.MAKE_WEBHOOK_URL;
+  if (!webhookUrl) {
+    console.error('MAKE_WEBHOOK_URL is not defined');
+    return res.status(500).json({ error: 'Missing Make webhook URL' });
+  }
+
   try {
-    const makeRes = await fetch(process.env.MAKE_WEBHOOK_URL, {
+    const makeRes = await fetch(webhookUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -40,9 +46,9 @@ export default async function handler(req, res) {
       return res.status(200).json([]);
     }
 
-    res.status(200).json(data.overlayData);
+    return res.status(200).json(data.overlayData);
   } catch (error) {
     console.error('Error fetching overlay data:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }
