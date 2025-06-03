@@ -1,6 +1,5 @@
 import sharp from 'sharp';
 import { saveOverlay } from './overlay-info.js'; // no need to import getOverlay
-import fetch from 'node-fetch'; // Optional: if running locally
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
