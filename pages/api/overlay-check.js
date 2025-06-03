@@ -11,6 +11,8 @@ export default async function handler(req, res) {
   }
 
   const { customerFileUrl, templateUrl } = req.body;
+  const { sessionId, fileName, productName } = req.body;
+
 
   if (!customerFileUrl || !templateUrl) {
     return res.status(400).json({ error: 'Missing customerFileUrl or templateUrl.' });
@@ -65,9 +67,9 @@ export default async function handler(req, res) {
     const base64Image = compositeBuffer.toString('base64');
     const overlayDataUrl = `data:image/png;base64,${base64Image}`;
     
-    saveOverlay(req.body.sessionId, {
-      fileName: req.body.fileName,
-      productName: req.body.productName,
+    saveOverlay(sessionId, {
+      fileName,
+      productName,
       customerFileUrl,
       overlayImageUrl: overlayDataUrl,
       fileId: 'TODO: your unique file id if needed',
