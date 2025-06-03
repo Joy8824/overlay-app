@@ -22,5 +22,5 @@ export default function handler(req, res) {
   }
 
   const overlays = getOverlay(session);
-  return res.status(200).json(overlays);
+  return res.status(200).json({overlays});
 }
