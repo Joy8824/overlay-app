@@ -1,95 +1,70 @@
-// Temporary in-memory store (resets on every Vercel deployment or server restart)
-//const overlayStore = new Map();
-// Use globalThis to persist in-memory store across requests (if warm)
-globalThis.__overlayStore = globalThis.__overlayStore || new Map();
-const overlayStore = globalThis.__overlayStore;
+import fetch from 'node-fetch';
 
-
-export function saveOverlay(sessionId, overlay) {
-  const existing = overlayStore.get(sessionId) || [];
-  overlayStore.set(sessionId, [...existing, overlay]);
-
-  console.log(`Saved overlay for session [${sessionId}]`); //delete later
-  console.log(`Overlay store now has ${overlayStore.get(sessionId).length} items`);   //delete later
-  
+const DROPBOX_TOKEN = process.env.DROPBOX_ACCESS_TOKEN;
+if (!DROPBOX_TOKEN) {
+  throw new Error('Missing Dropbox access token');
 }
 
-export function getOverlay(sessionId) {
-  return overlayStore.get(sessionId) || [];
-}
+const DROPBOX_FOLDER = '/Overlays';
 
-export default async function handler(req, res) {
-  const method = req.method;
+/**
+ * Fetch overlays for a session from Dropbox
+ */
+export async function getOverlay(sessionId) {
+  const path = `${DROPBOX_FOLDER}/${sessionId}.json`;
 
-  if (method === 'GET') {
-    // Fetch overlay data only
-    const sessionId = req.query.sessionId;
-    if (!sessionId) {
-      return res.status(400).json({ error: 'Missing sessionId' });
-    }
+  const response = await fetch('https://content.dropboxapi.com/2/files/download', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${DROPBOX_TOKEN}`,
+      'Dropbox-API-Arg': JSON.stringify({ path }),
+    },
+  });
 
-    const webhookUrl = process.env.MAKE_WEBHOOK_URL;
-    if (!webhookUrl) {
-      console.error('MAKE_WEBHOOK_URL is not defined');
-      return res.status(500).json({ error: 'Missing Make webhook URL' });
-    }
-
+  if (response.ok) {
+    const text = await response.text();
     try {
-      const makeRes = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId, action: 'getOverlay' }),
-      });
-
-      const text = await makeRes.text();
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (e) {
-        console.error('Make webhook did not return JSON:', text);
-        return res.status(500).json({ error: 'Invalid response from Make webhook' });
-      }
-
-      if (!data || !data.overlayData || data.overlayData.length === 0) {
-        return res.status(200).json([]);
-      }
-
-      return res.status(200).json(data.overlayData);
-    } catch (error) {
-      console.error('Error fetching overlay data:', error);
-      return res.status(500).json({ error: 'Internal server error' });
+      return JSON.parse(text);
+    } catch (e) {
+      console.warn(`Invalid JSON for session ${sessionId}:`, e);
+      return [];
     }
-  } else if (method === 'POST') {
-    // Save/update overlay data (process upload)
-    const body = req.body;
-    if (!body || !body.sessionId) {
-      return res.status(400).json({ error: 'Missing sessionId in POST body' });
-    }
-
-    const webhookUrl = process.env.MAKE_WEBHOOK_URL;
-    if (!webhookUrl) {
-      console.error('MAKE_WEBHOOK_URL is not defined');
-      return res.status(500).json({ error: 'Missing Make webhook URL' });
-    }
-
-    try {
-      // Pass full posted body to Make webhook for processing overlay/save
-      const makeRes = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-
-      const text = await makeRes.text();
-
-      // Optionally parse and validate Make response here
-      // For now just return a success message
-      return res.status(200).json({ message: 'Overlay processed' });
-    } catch (error) {
-      console.error('Error processing overlay data:', error);
-      return res.status(500).json({ error: 'Internal server error' });
-    }
+  } else if (response.status === 409) {
+    // File not found, return empty list
+    return [];
   } else {
-    return res.status(405).json({ error: 'Method not allowed' });
+    const text = await response.text();
+    throw new Error(`Failed to fetch overlay data: ${text}`);
   }
+}
+
+/**
+ * Save or update an overlay for a session
+ */
+export async function saveOverlay(sessionId, newOverlay) {
+  const currentOverlays = await getOverlay(sessionId);
+
+  // Append new overlay (you could also check for duplicates if needed)
+  currentOverlays.push(newOverlay);
+
+  const uploadRes = await fetch('https://content.dropboxapi.com/2/files/upload', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${DROPBOX_TOKEN}`,
+      'Content-Type': 'application/octet-stream',
+      'Dropbox-API-Arg': JSON.stringify({
+        path: `${DROPBOX_FOLDER}/${sessionId}.json`,
+        mode: 'overwrite',
+        mute: true,
+      }),
+    },
+    body: JSON.stringify(currentOverlays),
+  });
+
+  if (!uploadRes.ok) {
+    const text = await uploadRes.text();
+    throw new Error(`Dropbox upload failed: ${text}`);
+  }
+
+  console.log(`Overlay for session ${sessionId} updated in Dropbox`);
 }
