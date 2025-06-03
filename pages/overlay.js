@@ -2,7 +2,14 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { Card, CardContent } from '../components/Card'
+const Card = ({ children, className }) => (
+  <div className={`bg-white rounded-2xl shadow-md ${className}`}>{children}</div>
+);
+
+const CardContent = ({ children, className }) => (
+  <div className={`p-6 space-y-4 ${className}`}>{children}</div>
+);
+
 
 /**
  * Overlay Approval Preview Page
