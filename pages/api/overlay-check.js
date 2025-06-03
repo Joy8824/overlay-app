@@ -67,14 +67,14 @@ export default async function handler(req, res) {
     const base64Image = compositeBuffer.toString('base64');
     const overlayDataUrl = `data:image/png;base64,${base64Image}`;
     
- //   saveOverlay(sessionId, {
-   //   fileName,
-     // productName,
-   //   customerFileUrl,
-    //  overlayImageUrl: overlayDataUrl,
-    //  fileId: 'TODO: your unique file id if needed',
-    //});
-    //console.log('Saved overlay for session', sessionId) //delete later
+    saveOverlay(sessionId, {
+      fileName,
+      productName,
+      customerFileUrl,
+      overlayImageUrl: overlayDataUrl,
+      fileId: 'TODO: your unique file id if needed',
+    });
+    console.log('Saved overlay for session', sessionId) //delete later
 
     return res.status(200).json({
       sizeCheckPassed: true,
