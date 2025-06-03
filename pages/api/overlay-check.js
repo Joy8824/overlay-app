@@ -1,5 +1,4 @@
 import sharp from 'sharp';
-import { saveOverlay } from './overlay-info.js'; // no need to import getOverlay
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -10,10 +9,10 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid JSON body.' });
   }
 
-  const { customerFileUrl, templateUrl, sessionId, fileName, productName } = req.body;
+  const { customerFileUrl, templateUrl } = req.body;
 
-  if (!customerFileUrl || !templateUrl || !sessionId) {
-    return res.status(400).json({ error: 'Missing required fields.' });
+  if (!customerFileUrl || !templateUrl) {
+    return res.status(400).json({ error: 'Missing customerFileUrl or templateUrl.' });
   }
 
   try {
@@ -64,15 +63,6 @@ export default async function handler(req, res) {
 
     const base64Image = compositeBuffer.toString('base64');
     const overlayDataUrl = `data:image/png;base64,${base64Image}`;
-
-    // Save to Dropbox via overlay-info.js
-    await saveOverlay(sessionId, {
-      fileName,
-      productName,
-      customerFileUrl,
-      overlayImageUrl: overlayDataUrl,
-      fileId: 'TODO: your unique file id if needed',
-    });
 
     return res.status(200).json({
       sizeCheckPassed: true,
