@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+
 
 const DROPBOX_TOKEN = process.env.DROPBOX_ACCESS_TOKEN;
 if (!DROPBOX_TOKEN) {
