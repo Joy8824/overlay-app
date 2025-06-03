@@ -18,4 +18,9 @@ export default function handler(req, res) {
   }
 
   if (!session) {
-    return res.status(400).json({ error: 'Missing s
+    return res.status(400).json({ error: 'Missing session ID' });
+  }
+
+  const overlays = getOverlay(session);
+  return res.status(200).json(overlays);
+}
