@@ -40,7 +40,16 @@ export default async function handler(req, res) {
       body: JSON.stringify({ sessionId }),
     });
 
-    const data = await makeRes.json();
+    const text = await makeRes.text();
+    
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      console.error('Make webhook did not return JSON:', text);
+      return res.status(500).json({ error: 'Invalid response from Make webhook' });
+    }
+
 
     if (!data || !data.overlayData || data.overlayData.length === 0) {
       return res.status(200).json([]);
