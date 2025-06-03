@@ -19,7 +19,7 @@ export function getOverlay(sessionId) {
 }
 
 export default function handler(req, res) {
-  const { session } = req.query;
+  const { sessionId } = req.query;
 
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Only GET method allowed.' });
