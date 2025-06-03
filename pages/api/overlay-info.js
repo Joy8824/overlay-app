@@ -25,10 +25,10 @@ export default function handler(req, res) {
     return res.status(405).json({ error: 'Only GET method allowed.' });
   }
 
-  if (!session) {
+  if (!sessionId) {
     return res.status(400).json({ error: 'Missing session ID' });
   }
 
-  const overlays = getOverlay(session);
+  const overlays = getOverlay(sessionId);
   return res.status(200).json({overlays});
 }
