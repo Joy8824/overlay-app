@@ -39,12 +39,30 @@ export default function Overlay() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch overlay info for this sessionId
-  useEffect(() => {
-    if (!sessionId) return;
-    const fetchData = async () => {
-      try {
-        const res = await fetch(`/api/overlay-info?sessionId=${sessionId}`);
+// Fetch overlay info for this sessionId
+useEffect(() => {
+  if (!sessionId) return;
+  const fetchData = async () => {
+    try {
+      const res = await fetch('/api/overlay-info', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ sessionId }),
+      });
+      if (!res.ok) throw new Error("Failed to load overlay data");
+      const json = await res.json();
+      setItems(json);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchData();
+}, [sessionId]);
+
         if (!res.ok) throw new Error("Failed to load overlay data");
         const json = await res.json();
         setItems(json);
