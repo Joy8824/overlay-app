@@ -10,9 +10,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid JSON body.' });
   }
 
-  const { customerFileUrl, templateUrl } = req.body;
-  const { sessionId, fileName, productName } = req.body;
-
+const { customerFileUrl, templateUrl, sessionId, fileName, productName } = req.body;
 
   if (!customerFileUrl || !templateUrl) {
     return res.status(400).json({ error: 'Missing customerFileUrl or templateUrl.' });
