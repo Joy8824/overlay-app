@@ -1,5 +1,9 @@
 // Temporary in-memory store (resets on every Vercel deployment or server restart)
-const overlayStore = new Map();
+//const overlayStore = new Map();
+// Use globalThis to persist in-memory store across requests (if warm)
+globalThis.__overlayStore = globalThis.__overlayStore || new Map();
+const overlayStore = globalThis.__overlayStore;
+
 
 export function saveOverlay(sessionId, overlay) {
   const existing = overlayStore.get(sessionId) || [];
