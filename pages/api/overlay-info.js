@@ -37,10 +37,10 @@ export default async function handler(req, res) {
     const data = await makeRes.json();
 
     if (!data || !data.overlayData || data.overlayData.length === 0) {
-      return res.status(200).json({ overlayData: [] });
+      return res.status(200).json([]);
     }
 
-    res.status(200).json({ overlayData: data.overlayData });
+    res.status(200).json(data.overlayData);
   } catch (error) {
     console.error('Error fetching overlay data:', error);
     res.status(500).json({ error: 'Internal server error' });
