@@ -44,7 +44,7 @@ export default function Overlay() {
     if (!sessionId) return;
     const fetchData = async () => {
       try {
-        const res = await fetch(`/api/overlay-info?session=${sessionId}`);
+        const res = await fetch(`/api/overlay-info?sessionId=${sessionId}`);
         if (!res.ok) throw new Error("Failed to load overlay data");
         const json = await res.json();
         setItems(json);
