@@ -4,9 +4,14 @@ const overlayStore = new Map();
 export function saveOverlay(sessionId, overlay) {
   const existing = overlayStore.get(sessionId) || [];
   overlayStore.set(sessionId, [...existing, overlay]);
+
+  console.log(`Saved overlay for session [${sessionId}]`); //delete later
+  console.log(`Overlay store now has ${overlayStore.get(sessionId).length} items`);   //delete later
+  
 }
 
 export function getOverlay(sessionId) {
+  console.log(`📤 Returning ${data.length} overlays for session [${sessionId}]`); // delete later
   return overlayStore.get(sessionId) || [];
 }
 
