@@ -4,6 +4,7 @@ export default async function handler(req, res) {
 
   const resp = await fetch(
     `https://hook.us2.make.com/s0n9gbnzbh2on44e2329v5llt6lqgi3f?sessionId=${session}`
+    
   );
 
   // read once
