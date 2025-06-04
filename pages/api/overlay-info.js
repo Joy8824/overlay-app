@@ -29,4 +29,5 @@ export default async function handler(req, res) {
       details: err.message || err.toString(),
     });
   }
+  }
 
