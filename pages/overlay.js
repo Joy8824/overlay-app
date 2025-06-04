@@ -71,38 +71,44 @@ useEffect(() => {
 
       <div className="grid md:grid-cols-3 gap-6 items-start">
         {/* Carousel */}
-        <div className="md:col-span-2 relative">
-          {/* Arrows */}
-          {items.length > 1 && (
-            <>
-              <button
-                className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur rounded-full p-2 shadow"
-                onClick={prev}
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </button>
-              <button
-                className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur rounded-full p-2 shadow"
-                onClick={next}
-              >
-                <ArrowRight className="w-5 h-5" />
-              </button>
-            </>
-          )}
+  <div className="md:col-span-2 relative">
+  {/* Arrows */}
+  {items.length > 1 && (
+    <>
+      <button
+        className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur rounded-full p-2 shadow"
+        onClick={prev}
+      >
+        <ArrowLeft className="w-5 h-5" />
+      </button>
+      <button
+        className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur rounded-full p-2 shadow"
+        onClick={next}
+      >
+        <ArrowRight className="w-5 h-5" />
+      </button>
+    </>
+  )}
 
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.img
-              key={index}
-              src={current.overlayImageUrl || current.customerFileUrl}
-              alt={current.fileName}
-              className="w-full rounded-2xl shadow-md"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.3 }}
-            />
-          </AnimatePresence>
-        </div>
+  <AnimatePresence mode="wait" initial={false}>
+    <motion.div
+      key={index}
+      initial={{ opacity: 0, x: 100 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -100 }}
+      transition={{ duration: 0.3 }}
+      className="w-full rounded-2xl shadow-md overflow-hidden"
+    >
+      <img
+        src={current.overlayImageUrl || current.customerFileUrl}
+        alt={current.fileName}
+        className="w-full object-contain max-h-[500px]"
+      />
+    </motion.div>
+  </AnimatePresence>
+</div>
+
+
 
         {/* Sidebar */}
         <Card className="rounded-2xl shadow-md">
