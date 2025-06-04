@@ -26,8 +26,10 @@ export default function Overlay() {
 
 // Fetch overlay info for this sessionId
 useEffect(() => {
-  console.log('sessionId:', sessionId); //
   if (!sessionId) return;
+
+  console.log('🧪 sessionId:', sessionId); // DEBUG: log sessionId
+
   const fetchData = async () => {
     try {
       const res = await fetch('/api/overlay-info', {
@@ -37,18 +39,27 @@ useEffect(() => {
         },
         body: JSON.stringify({ sessionId }),
       });
-      if (!res.ok) throw new Error("Failed to load overlay data");
+
+      if (!res.ok) {
+        const text = await res.text();
+        console.error('Overlay-info error:', text);
+        throw new Error('Failed to load overlay data');
+      }
+
       const json = await res.json();
+      console.log('🧾 overlay-info response:', json); // DEBUG: log Make response
+
       setItems(json);
-      console.log(items) // testing array response
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
+
   fetchData();
 }, [sessionId]);
+
 
   const current = items[index] ?? {};
 
