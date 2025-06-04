@@ -39,6 +39,7 @@ useEffect(() => {
       if (!res.ok) throw new Error("Failed to load overlay data");
       const json = await res.json();
       setItems(json);
+      console.log(items) // testing array response
     } catch (err) {
       setError(err.message);
     } finally {
