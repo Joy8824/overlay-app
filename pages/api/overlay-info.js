@@ -11,7 +11,7 @@ export default async function handler(req, res) {
 
   try {
     const response = await fetch(
-      `https://hook.us2.make.com/get-order-files?sessionId=${sessionId}`
+      `https://hook.us2.make.com/s0n9gbnzbh2on44e2329v5llt6lqgi3f?sessionId=${sessionId}`
     );
     const data = await response.json();
 
