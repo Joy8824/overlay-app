@@ -23,7 +23,10 @@ export default async function handler(req, res) {
 
     res.status(200).json(data.overlayData);
   } catch (err) {
-    console.error('Overlay info error:', err);
-    res.status(500).json({ error: 'Failed to fetch overlay data.' });
+    console.error('Overlay info error:', err); // <--- Already there
+    return res.status(500).json({
+      error: 'Failed to fetch overlay data.',
+      details: err.message || err.toString(),
+    });
   }
-}
+
