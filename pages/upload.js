@@ -15,7 +15,7 @@ export default function Upload() {
   // Fetch order info on mount
   useEffect(() => {
     if (!sessionId) return;
-    fetch(`/api/session?session=${sessionId}`)
+    fetch(`/api/session?sessionId=${sessionId}`)
       .then(r => r.json())
       .then(setInfo)
       .catch(() => setMsg('Could not load order info'));
