@@ -4,6 +4,8 @@ export default async function handler(req, res) {
   }
 
   const { sessionId } = req.body;
+  console.log(' /api/overlay-info called with sessionId:', sessionId);
+
   if (!sessionId) {
     return res.status(400).json({ error: 'Missing sessionId in request body.' });
   }
