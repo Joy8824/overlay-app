@@ -54,6 +54,7 @@ export default function Upload() {
       
       if (resp.ok) {
         setStatus('ok');
+<<<<<<< HEAD
         setMsg('Upload successful! Processing your file…');
         // Wait 5 seconds before redirecting
   
@@ -65,7 +66,14 @@ export default function Upload() {
           }
         };
         checkOverlayData();
+=======
+        setMsg('Upload successful! Processing your file.');
+>>>>>>> parent of db6d95d (Update upload.js)
 
+        //wait 5 seconds before redirecting
+        setTimeout(() => {
+          router.push('/overlay?sessionId=${sessionId}');
+        }, 5000); //5 seconds
       } else {
         console.error('Upload failed:', result);
         setStatus('err');
