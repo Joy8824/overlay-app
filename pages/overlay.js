@@ -82,10 +82,10 @@ return (
     </div>
 
     {/* Carousel + Sidebar */}
-    <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-6 items-start">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
       
       {/* Carousel */}
-      <div className="relative">
+      <div className="md:col-span-2 relative">
         {/* Arrows */}
         {items.length > 1 && (
           <>
@@ -113,12 +113,13 @@ return (
             transition={{ duration: 0.3 }}
             className="w-full rounded-2xl shadow-md overflow-hidden"
           >
-            <img
-              src={current.overlayImageUrl || current.customerFileUrl}
-              alt={current.fileName}
-              className="w-full object-contain max-h-[500px]"
-              onError={() => console.log('Image failed to load:', current.overlayImageUrl)}
-            />
+              <img
+              src={current.overlayImageUrl}
+              alt="Overlay"
+                className="w-full object-contain max-h-[500px] border border-blue-500"
+                  onError={() => console.log('Overlay image failed to load:', current.overlayImageUrl)}
+                    />
+
           </motion.div>
         </AnimatePresence>
       </div>
