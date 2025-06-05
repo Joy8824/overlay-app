@@ -24,6 +24,17 @@ export default function Overlay() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [view, setView] = useState('overlay'); // new state to track which image to show
+
+// Auto-toggle between overlay and customer file every 3 seconds
+useEffect(() => {
+  const timer = setInterval(() => {
+    setView((prev) => (prev === 'overlay' ? 'customer' : 'overlay'));
+  }, 3000);
+  return () => clearInterval(timer);
+}, []);
+
+
 // Fetch overlay info for this sessionId
 useEffect(() => {
   if (!sessionId) return;
@@ -102,22 +113,23 @@ useEffect(() => {
           </>
         )}
 
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            transition={{ duration: 0.3 }}
-            className="w-full rounded-2xl shadow-md overflow-hidden"
-          >
-            <img
-              src={current.overlayImageUrl || current.customerFileUrl}
-              alt={current.fileName}
-              className="w-full object-contain max-h-[500px] bg-gray-50"
-            />
-          </motion.div>
-        </AnimatePresence>
+<AnimatePresence mode="wait" initial={false}>
+  <motion.div
+    key={`${index}-${view}`}
+    initial={{ opacity: 0, x: 100 }}
+    animate={{ opacity: 1, x: 0 }}
+    exit={{ opacity: 0, x: -100 }}
+    transition={{ duration: 0.3 }}
+    className="w-full rounded-2xl shadow-md overflow-hidden bg-gray-100"
+  >
+    <img
+      src={view === 'overlay' ? current.overlayImageUrl : current.customerFileUrl}
+      alt={current.fileName}
+      className="w-full object-contain max-h-[500px]"
+    />
+  </motion.div>
+</AnimatePresence>
+
       </div>
 
       {/* Right: Info Sidebar */}
