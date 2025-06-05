@@ -27,8 +27,7 @@ export default function Overlay() {
 // Fetch overlay info for this sessionId
 useEffect(() => {
   if (!sessionId) return;
-
-  console.log('🧪 sessionId:', sessionId); // DEBUG: log sessionId
+  console.log('sessionId:', sessionId); // DEBUG: log sessionId
 
   const fetchData = async () => {
     try {
@@ -47,7 +46,7 @@ useEffect(() => {
       }
 
       const json = await res.json();
-      console.log('🧾 overlay-info response:', json); // DEBUG: log Make response
+      console.log('overlay-info response:', json); // DEBUG: log Make response
 
       setItems(json);
     } catch (err) {
