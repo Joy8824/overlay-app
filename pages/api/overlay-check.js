@@ -57,7 +57,7 @@ export default async function handler(req, res) {
 
     // Overlay template onto customer image
     const compositeBuffer = await sharp(Buffer.from(customerBuffer))
-      .composite([{ input: Buffer.from(templateBuffer), blend: 'over', opacity: 0.5 }])
+      .composite([{ input: Buffer.from(templateBuffer), blend: 'over', opacity: 0.8 }])
       .png()
       .toBuffer();
 
