@@ -12,7 +12,7 @@ export default async function handler(req, res) {
 
   try {
     const response = await fetch(
-      `https://hook.us2.make.com/s0n9gbnzbh2on44e2329v5llt6lqgi3f?sessionId=${sessionId}`
+      `https://hook.us2.make.com/nm18xa6oshfhds9s0iim7v6ccy2xsi63?sessionId=${sessionId}`
     );
 
     const text = await response.text();
