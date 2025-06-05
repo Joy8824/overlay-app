@@ -55,9 +55,14 @@ export default async function handler(req, res) {
       });
     }
 
+    const resizedTemplate = await sharp(Buffer.from(templateBuffer))
+    .resize(width, height)
+    .ensureAlpha(0.8) // adds an alpha channel with a 0.8 transparency
+    .toBuffer();
+
     // Overlay template onto customer image
     const compositeBuffer = await sharp(Buffer.from(customerBuffer))
-      .composite([{ input: Buffer.from(templateBuffer), blend: 'over', opacity: 0.8 }])
+      .composite([{ input: Buffer.from(templateBuffer), blend: 'over', opacity: 0.5 }])
       .png()
       .toBuffer();
 
