@@ -55,6 +55,9 @@ export default function Upload() {
       if (resp.ok) {
         setStatus('ok');
         setMsg('Upload successful! Processing your file.');
+        
+        // Redirect to overlay review page (optional)
+        router.push(`/overlay?sessionId=${sessionId}`);
       } else {
         console.error('Upload failed:', result);
         setStatus('err');
