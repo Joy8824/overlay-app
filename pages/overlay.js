@@ -111,10 +111,12 @@ useEffect(() => {
       transition={{ duration: 0.3 }}
       className="w-full rounded-2xl shadow-md overflow-hidden"
     >
+        console.log(current) //delete later
       <img
         src={current.overlayImageUrl || current.customerFileUrl}
         alt={current.fileName}
         className="w-full object-contain max-h-[500px]"
+        onError={() => console.log('Image failed to load:', current.overlayImageUrl)} // delete later maybe
       />
     </motion.div>
   </AnimatePresence>
@@ -128,11 +130,14 @@ useEffect(() => {
             <h3 className="text-xl font-semibold">File Details</h3>
             <p><span className="font-medium">File:</span> {current.fileName}</p>
             <p><span className="font-medium">Product:</span> {current.productName}</p>
-            {/* Additional metadata can be added here */}
+          
+            {/* Additional metadata can be added here  buttons insde the card sidebar
             <div className="space-x-2 mt-4 hidden">{/* Hidden until wired up */}
               <button className="bg-green-600 text-white px-3 py-1.5 rounded-xl">Approve</button>
               <button className="bg-red-600 text-white px-3 py-1.5 rounded-xl">Reject</button>
             </div>
+          */}
+          
           </CardContent>
         </Card>
       </div>
