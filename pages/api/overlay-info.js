@@ -36,13 +36,13 @@ export default async function handler(req, res) {
       });
     }
 
-    // Check if we got the expected overlayData array
-    if (!Array.isArray(data.overlayData)) {
-      return res.status(500).json({ error: 'Invalid response format from Make.', raw: data });
-    }
+   // If it's an object, wrap in array for frontend
+    const array = Array.isArray(data.overlayData) ? data.overlayData : [data.overlayData];
+    console.log('Parsed Make response:', data); //
 
-    res.status(200).json(data.overlayData);
-  } catch (err) {
+    res.status(200).json(array);
+
+    } catch (err) {
     console.error('Overlay info error:', err);
     return res.status(500).json({
       error: 'Failed to fetch overlay data.',
