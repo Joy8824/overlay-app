@@ -131,12 +131,12 @@ useEffect(() => {
             <p><span className="font-medium">File:</span> {current.fileName}</p>
             <p><span className="font-medium">Product:</span> {current.productName}</p>
           
-            {/* Additional metadata can be added here  buttons insde the card sidebar
-            <div className="space-x-2 mt-4 hidden">{/* Hidden until wired up */}
-              <button className="bg-green-600 text-white px-3 py-1.5 rounded-xl">Approve</button>
-              <button className="bg-red-600 text-white px-3 py-1.5 rounded-xl">Reject</button>
-            </div>
-          */}
+            {/* Additional metadata can be added here  buttons insde the card sidebar */}
+          //  <div className="space-x-2 mt-4 hidden">{/* Hidden until wired up */}
+             // <button className="bg-green-600 text-white px-3 py-1.5 rounded-xl">Approve</button>
+             // <button className="bg-red-600 text-white px-3 py-1.5 rounded-xl">Reject</button>
+          //  </div>
+          
           
           </CardContent>
         </Card>
