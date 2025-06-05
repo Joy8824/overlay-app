@@ -69,78 +69,70 @@ useEffect(() => {
   if (error) return <p className="text-center text-red-600 mt-10">{error}</p>;
   if (!items.length) return <p className="text-center mt-10">No overlay data found.</p>;
 
-  return (
-    <div className="container mx-auto p-4 max-w-5xl">
-      {/* Approve / Reject buttons – functions wired later */}
-      <div className="flex justify-end gap-4 mb-4">
-        <button className="bg-green-600 text-white px-4 py-2 rounded-2xl shadow hover:opacity-90" disabled>
-          Approve
-        </button>
-        <button className="bg-red-600 text-white px-4 py-2 rounded-2xl shadow hover:opacity-90" disabled>
-          Reject
-        </button>
-      </div>
-
-      <div className="grid md:grid-cols-3 gap-6 items-start">
-        {/* Carousel */}
-  <div className="md:col-span-2 relative">
-  {/* Arrows */}
-  {items.length > 1 && (
-    <>
-      <button
-        className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur rounded-full p-2 shadow"
-        onClick={prev}
-      >
-        <ArrowLeft className="w-5 h-5" />
+return (
+  <div className="container mx-auto p-4 max-w-6xl">
+    {/* Approve / Reject buttons – TOP */}
+    <div className="flex justify-end gap-4 mb-6">
+      <button className="bg-green-600 text-white px-4 py-2 rounded-2xl shadow hover:opacity-90" disabled>
+        Approve
       </button>
-      <button
-        className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur rounded-full p-2 shadow"
-        onClick={next}
-      >
-        <ArrowRight className="w-5 h-5" />
+      <button className="bg-red-600 text-white px-4 py-2 rounded-2xl shadow hover:opacity-90" disabled>
+        Reject
       </button>
-    </>
-  )}
-
-  <AnimatePresence mode="wait" initial={false}>
-    <motion.div
-      key={index}
-      initial={{ opacity: 0, x: 100 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -100 }}
-      transition={{ duration: 0.3 }}
-      className="w-full rounded-2xl shadow-md overflow-hidden"
-    >
-        console.log(current); 
-      <img
-        src={current.overlayImageUrl || current.customerFileUrl}
-        alt={current.fileName}
-        className="w-full object-contain max-h-[500px]"
-        onError={() => console.log('Image failed to load:', current.overlayImageUrl)} // delete later maybe
-      />
-    </motion.div>
-  </AnimatePresence>
-</div>
-
-
-
-        {/* Sidebar */}
-        <Card className="rounded-2xl shadow-md">
-          <CardContent className="p-6 space-y-4">
-            <h3 className="text-xl font-semibold">File Details</h3>
-            <p><span className="font-medium">File:</span> {current.fileName}</p>
-            <p><span className="font-medium">Product:</span> {current.productName}</p>
-          
-            {/* Additional metadata can be added here  buttons insde the card sidebar */}
-            <div className="space-x-2 mt-4 hidden">{/* Hidden until wired up */}
-              <button className="bg-green-600 text-white px-3 py-1.5 rounded-xl">Approve</button>
-              <button className="bg-red-600 text-white px-3 py-1.5 rounded-xl">Reject</button>
-            </div>
-          
-          
-          </CardContent>
-        </Card>
-      </div>
     </div>
-  );
+
+    {/* Carousel + Sidebar */}
+    <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-6 items-start">
+      
+      {/* Carousel */}
+      <div className="relative">
+        {/* Arrows */}
+        {items.length > 1 && (
+          <>
+            <button
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur rounded-full p-2 shadow"
+              onClick={prev}
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <button
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur rounded-full p-2 shadow"
+              onClick={next}
+            >
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </>
+        )}
+
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -100 }}
+            transition={{ duration: 0.3 }}
+            className="w-full rounded-2xl shadow-md overflow-hidden"
+          >
+            <img
+              src={current.overlayImageUrl || current.customerFileUrl}
+              alt={current.fileName}
+              className="w-full object-contain max-h-[500px]"
+              onError={() => console.log('Image failed to load:', current.overlayImageUrl)}
+            />
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Sidebar */}
+      <Card className="rounded-2xl shadow-md">
+        <CardContent className="p-6 space-y-4">
+          <h3 className="text-xl font-semibold">File Details</h3>
+          <p><span className="font-medium">File:</span> {current.fileName}</p>
+          <p><span className="font-medium">Product:</span> {current.productName}</p>
+        </CardContent>
+      </Card>
+    </div>
+  </div>
+);
+
 }
