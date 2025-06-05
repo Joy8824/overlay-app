@@ -14,9 +14,9 @@ export default async function handler(req, res) {
     const response = await fetch(
       `https://hook.us2.make.com/s0n9gbnzbh2on44e2329v5llt6lqgi3f?sessionId=${sessionId}`
     );
-    //console.log(' Make response text:', text); // <-- Add this
 
     const text = await response.text();
+    console.log(' Make response text:', text); // <-- Add this
 
     // Check for bad response (e.g., "Accepted")
     if (!text || text === 'Accepted') {
