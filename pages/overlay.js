@@ -15,7 +15,7 @@ const CardContent = ({ children, className }) => (
  * Overlay Approval Preview Page
  *
  */
-export default function Overlay() {
+  export default function Overlay() {
   const router = useRouter();
   const { sessionId } = router.query;
 
@@ -26,7 +26,7 @@ export default function Overlay() {
 
   const [view, setView] = useState('overlay'); // new state to track which image to show
 
-// Auto-toggle between overlay and customer file every 3 seconds
+  // Auto-toggle between overlay and customer file every 3 seconds
 useEffect(() => {
   const timer = setInterval(() => {
     setView((prev) => (prev === 'overlay' ? 'customer' : 'overlay'));
