@@ -120,7 +120,7 @@ useEffect(() => {
     animate={{ opacity: 1, x: 0 }}
     exit={{ opacity: 0, x: -100 }}
     transition={{ duration: 0.3 }}
-    className="w-full rounded-2xl shadow-md overflow-hidden bg-gray-100"
+    className="w-full rounded-2xl shadow-md overflow-hidden bg-gray-800" // <-- dark background
   >
     <img
       src={view === 'overlay' ? current.overlayImageUrl : current.customerFileUrl}
