@@ -55,11 +55,29 @@ export default function Upload() {
       if (resp.ok) {
         setStatus('ok');
         setMsg('Upload successful! Processing your file.');
+        // Start polling Make until overlay data is ready
+        const checkOverlayData = async (tries = 0) => {
+          const resp = await fetch('/api/overlay-info', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId }),
+          });
+          
+          if (!resp.ok) return console.error('Polling failed');
+          const data = await resp.json();
+    
+          if (Array.isArray(data) && data.length > 0) {
+      // overlayData exists – redirect!
+            router.push(`/overlay?sessionId=${sessionId}`);
+          } else if (tries < 10) {
+      // Try again in 2 seconds, up to 10 tries
+            setTimeout(() => checkOverlayData(tries + 1), 2000);
+          } else {
+            setMsg('File uploaded but overlay not ready yet. Try refreshing in a moment.');
+          }
+        };
+        checkOverlayData();
 
-        //wait 5 seconds before redirecting
-        setTimeout(() => {
-          router.push('/overlay?sessionId=${sessionId}');
-        }, 5000); //5 seconds
       } else {
         console.error('Upload failed:', result);
         setStatus('err');
