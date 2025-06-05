@@ -55,16 +55,19 @@ export default async function handler(req, res) {
       });
     }
 
-    const resizedTemplate = await sharp(Buffer.from(templateBuffer))
+    const templateWithAlpha = await sharp(Buffer.from(templateBuffer))
     .resize(width, height)
-    .ensureAlpha(0.8) // adds an alpha channel with a 0.8 transparency
+    .ensureAlpha(0.3) // adds an alpha channel with a 0.8 transparency
     .toBuffer();
+    const meta = await sharp(templateWithAlpha).metadata();
+    console.log('Template metadata:', meta); // Should show alpha channel
 
     // Overlay template onto customer image
-    const compositeBuffer = await sharp(Buffer.from(customerBuffer))
-      .composite([{ input: Buffer.from(templateBuffer), blend: 'over'}])
-      .png()
-      .toBuffer();
+  const compositeBuffer = await sharp(customerBuffer)
+  .composite([{ input: templateWithAlpha }]) // template layered on top
+  .png()
+  .toBuffer();
+
 
     const base64Image = compositeBuffer.toString('base64');
     const overlayDataUrl = `data:image/png;base64,${base64Image}`;
