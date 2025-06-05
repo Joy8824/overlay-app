@@ -69,6 +69,7 @@ export default function Upload() {
         checkOverlayData();
 =======
         setMsg('Upload successful! Processing your file.');
+<<<<<<< HEAD
 >>>>>>> parent of db6d95d (Update upload.js)
 =======
         setMsg('Upload successful! Processing your file.');
@@ -78,6 +79,11 @@ export default function Upload() {
         setTimeout(() => {
           router.push('/overlay?sessionId=${sessionId}');
         }, 5000); //5 seconds
+=======
+        
+        // Redirect to overlay review page (optional)
+        router.push(`/overlay?sessionId=${sessionId}`);
+>>>>>>> parent of 1d2d8c9 (Update upload.js)
       } else {
         console.error('Upload failed:', result);
         setStatus('err');
