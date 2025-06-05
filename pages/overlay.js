@@ -26,11 +26,11 @@ const CardContent = ({ children, className }) => (
 
   const [view, setView] = useState('overlay'); // new state to track which image to show
 
-  // Auto-toggle between overlay and customer file every 3 seconds
+  // Auto-toggle between overlay and customer file every 5 seconds
 useEffect(() => {
   const timer = setInterval(() => {
     setView((prev) => (prev === 'overlay' ? 'customer' : 'overlay'));
-  }, 3000);
+  }, 5000);
   return () => clearInterval(timer);
 }, []);
 
