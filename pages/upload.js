@@ -54,36 +54,12 @@ export default function Upload() {
       
       if (resp.ok) {
         setStatus('ok');
-<<<<<<< HEAD
-<<<<<<< HEAD
         setMsg('Upload successful! Processing your file…');
         // Wait 5 seconds before redirecting
   
         setTimeout(() => {
           router.push(`/overlay?sessionId=${sessionId}`);
         }, 5000); // 5 seconds
-      }else {
-        setMsg('File uploaded but overlay not ready yet. Try refreshing in a moment.');
-          }
-        };
-        checkOverlayData();
-=======
-        setMsg('Upload successful! Processing your file.');
-<<<<<<< HEAD
->>>>>>> parent of db6d95d (Update upload.js)
-=======
-        setMsg('Upload successful! Processing your file.');
->>>>>>> parent of db6d95d (Update upload.js)
-
-        //wait 5 seconds before redirecting
-        setTimeout(() => {
-          router.push('/overlay?sessionId=${sessionId}');
-        }, 5000); //5 seconds
-=======
-        
-        // Redirect to overlay review page (optional)
-        router.push(`/overlay?sessionId=${sessionId}`);
->>>>>>> parent of 1d2d8c9 (Update upload.js)
       } else {
         console.error('Upload failed:', result);
         setStatus('err');
@@ -97,7 +73,6 @@ export default function Upload() {
       setMsg('Something went wrong while uploading.');
     }
   }
-  
   if (!info) return <p>Loading…</p>;
 
   const { product, qty } = info;
