@@ -69,7 +69,7 @@ export default function Upload() {
           if (Array.isArray(data) && data.length > 0) {
       // overlayData exists – redirect!
             router.push(`/overlay?sessionId=${sessionId}`);
-          } else if (tries < 10) {
+          } else if (tries < 2) {
       // Try again in 2 seconds, up to 10 tries
             setTimeout(() => checkOverlayData(tries + 1), 2000);
           } else {
