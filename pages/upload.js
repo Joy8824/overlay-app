@@ -55,6 +55,7 @@ export default function Upload() {
       if (resp.ok) {
         setStatus('ok');
 <<<<<<< HEAD
+<<<<<<< HEAD
         setMsg('Upload successful! Processing your file…');
         // Wait 5 seconds before redirecting
   
@@ -66,6 +67,9 @@ export default function Upload() {
           }
         };
         checkOverlayData();
+=======
+        setMsg('Upload successful! Processing your file.');
+>>>>>>> parent of db6d95d (Update upload.js)
 =======
         setMsg('Upload successful! Processing your file.');
 >>>>>>> parent of db6d95d (Update upload.js)
