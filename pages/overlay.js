@@ -111,7 +111,7 @@ useEffect(() => {
       transition={{ duration: 0.3 }}
       className="w-full rounded-2xl shadow-md overflow-hidden"
     >
-        console.log(current) //delete later
+        console.log(current); 
       <img
         src={current.overlayImageUrl || current.customerFileUrl}
         alt={current.fileName}
