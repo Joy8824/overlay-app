@@ -54,10 +54,9 @@ export default function Upload() {
       
       if (resp.ok) {
         setStatus('ok');
-        setMsg('Upload successful! Processing your file.');
-        
-      
+        setMsg('Upload successful! Processing your file…');
         // Wait 5 seconds before redirecting
+  
         setTimeout(() => {
           router.push(`/overlay?sessionId=${sessionId}`);
         }, 5000); // 5 seconds
